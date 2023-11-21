@@ -2,23 +2,28 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html/v2"
 )
 
-func main() {
-	app := fiber.New()
+type PageData struct {
+	Title   string
+	Message string
+}
 
-	app.Static("/", "./public/")
+func main() {
+	engine := html.New("./public/", ".html")
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendFile("index.html")
-	})
+		pageDAta := PageData{
+			Title:   "BROOOO",
+			Message: "TAKE A SHOT",
+		}
 
-	app.Get("/home", func(c *fiber.Ctx) error {
-		return c.SendFile("index.html")
-	})
-
-	app.Get("/about", func(c *fiber.Ctx) error {
-		return c.SendFile("index.html")
+		return c.Render("index", pageDAta)
 	})
 
 	app.Listen(":3000")
